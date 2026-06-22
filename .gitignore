@@ -1,0 +1,49 @@
+# Environment Variables
+.env
+.env.*
+!.env.example
+env
+
+# Mac/OSX
+.DS_Store
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Node / Frontend
+node_modules/
+dist/
+build/
+.eslintcache
+.vite/
+
+# Python / Backend
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+*.sqlite
+*.sqlite3
+*.db
+
+# Docker
+.docker/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Coverage
+coverage/
+htmlcov/
+.coverage
+.tox/
