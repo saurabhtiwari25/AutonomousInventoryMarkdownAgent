@@ -142,13 +142,13 @@ async def run_workflow_generator(task_id: str, payload: dict):
                 node_name = key
                 global_monitor_state["agents"][node_name] = {
                     "status": "Completed",
-                    "last_run": datetime.now().strftime("%I:%M:%S %p"),
+                    "last_run": datetime.utcnow().isoformat() + "Z",
                     "duration": round(time.time() - start_time, 2),
                     "message": "Processed successfully"
                 }
                 
                 global_monitor_state["mcp_calls"].insert(0, {
-                    "timestamp": datetime.now().strftime("%I:%M:%S %p"),
+                    "timestamp": datetime.utcnow().isoformat() + "Z",
                     "tool_name": f"{node_name.lower()}_call",
                     "status": "Success",
                     "duration": f"{int((time.time() - start_time)*1000)}ms"

@@ -198,7 +198,11 @@ export default function AgentMonitor() {
                     </p>
 
                     <p className="mt-2 text-base font-semibold">
-                      {agent.last_run || "Never"}
+                      {agent.last_run && agent.last_run !== "Never" 
+                        ? (!isNaN(new Date(agent.last_run).getTime()) 
+                          ? new Date(agent.last_run).toLocaleTimeString() 
+                          : agent.last_run)
+                        : "Never"}
                     </p>
                   </div>
 
@@ -276,7 +280,9 @@ export default function AgentMonitor() {
                     className="transition-colors hover:bg-muted/30"
                   >
                     <TableCell className="px-6 font-mono text-xs text-muted-foreground">
-                      {call.timestamp}
+                      {!isNaN(new Date(call.timestamp).getTime())
+                        ? new Date(call.timestamp).toLocaleTimeString()
+                        : call.timestamp}
                     </TableCell>
 
                     <TableCell className="font-medium">
