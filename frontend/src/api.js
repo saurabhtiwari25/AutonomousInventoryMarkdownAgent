@@ -1,4 +1,4 @@
-const API_BASE = 'https://autonomousinventorymarkdownagent.onrender.com/:8000';
+const API_BASE = 'https://autonomousinventorymarkdownagent.onrender.com';
 
 export async function uploadInventory(file) {
   const formData = new FormData();
