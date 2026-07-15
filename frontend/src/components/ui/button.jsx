@@ -37,7 +37,7 @@ const buttonVariants = cva(
         outline: "",
         secondary: "",
         ghost:
-          "border-transparent bg-transparent shadow-none hover:bg-[#f0f0f0] dark:hover:bg-[#1c1c1c] hover:border-transparent",
+          "border-transparent bg-transparent dark:bg-transparent shadow-none dark:shadow-none hover:bg-[#f0f0f0] dark:hover:bg-[#ffffff0a] hover:border-transparent dark:hover:border-transparent",
         link:
           "border-transparent bg-transparent shadow-none underline-offset-4 hover:underline hover:bg-transparent hover:border-transparent",
       },
