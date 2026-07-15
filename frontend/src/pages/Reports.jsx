@@ -27,9 +27,7 @@ export default function Reports() {
     setReports((prev) => prev.filter((r) => r.task_id !== id));
   };
 
-  const handleDelete = (id) => {
-    setReports((prev) => prev.filter((r) => r.task_id !== id));
-  };
+
 
   return (
     <div className="flex flex-col gap-6 flex-1">
@@ -82,25 +80,9 @@ export default function Reports() {
                   )}
                 </div>
 
-                {r.status === "Approved" ? (
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    className="w-full mt-auto"
-                    onClick={() => handleDelete(r.task_id)}
-                  >
-                    Delete
-                  </Button>
-                ) : (
+                {r.status !== 'Approved' && (
                   <div className="flex gap-2 mt-auto">
-                    <Button
-                      size="sm"
-                      className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
-                      onClick={() => handleApprove(r.task_id)}
-                    >
-                      Approve
-                    </Button>
-
+                    <Button size="sm" className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => handleApprove(r.task_id)}>Approve</Button>
                     <Button
                       size="sm"
                       variant="outline"
@@ -108,8 +90,7 @@ export default function Reports() {
                       onClick={() => handleReject(r.task_id)}
                     >
                       Reject
-                    </Button>
-                  </div>
+                    </Button>                  </div>
                 )}
               </CardContent>
             </Card>
