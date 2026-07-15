@@ -17,7 +17,7 @@ export default function Analysis() {
   const startAnalysis = async () => {
     try {
       setRunning(true);
-      setLogs([{ time: new Date().toLocaleTimeString(), message: 'Initiating multi-agent workflow...' }]);
+      setLogs([{ time: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true }), message: 'Initiating multi-agent workflow...' }]);
       const res = await axios.post('https://autonomousinventorymarkdownagent.onrender.com/analyze', {
         product_id: "P001", product_name: "Test Laptop", current_price: 1200.0,
         unit_cost: 800.0, stock_quantity: 500, monthly_sales: 10
@@ -31,7 +31,7 @@ export default function Analysis() {
     const es = new EventSource(`https://autonomousinventorymarkdownagent.onrender.com/agent-status/${taskId}`);
     es.onmessage = (e) => {
       const data = JSON.parse(e.data);
-      setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), message: `[${data.node}] ${data.status}` }]);
+      setLogs(prev => [...prev, { time: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true }), message: `[${data.node}] ${data.status}` }]);
       if (data.node === 'END') { es.close(); setRunning(false); }
     };
     es.onerror = () => { es.close(); setRunning(false); };

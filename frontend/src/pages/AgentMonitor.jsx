@@ -200,7 +200,7 @@ export default function AgentMonitor() {
                     <p className="mt-2 text-base font-semibold">
                       {agent.last_run && agent.last_run !== "Never" 
                         ? (!isNaN(new Date(agent.last_run).getTime()) 
-                          ? new Date(agent.last_run).toLocaleTimeString() 
+                          ? new Date(agent.last_run).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true }) 
                           : agent.last_run)
                         : "Never"}
                     </p>
@@ -281,7 +281,7 @@ export default function AgentMonitor() {
                   >
                     <TableCell className="px-6 font-mono text-xs text-muted-foreground">
                       {!isNaN(new Date(call.timestamp).getTime())
-                        ? new Date(call.timestamp).toLocaleTimeString()
+                        ? new Date(call.timestamp).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true })
                         : call.timestamp}
                     </TableCell>
 

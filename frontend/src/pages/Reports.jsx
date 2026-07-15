@@ -27,7 +27,28 @@ export default function Reports() {
     setReports((prev) => prev.filter((r) => r.task_id !== id));
   };
 
-
+  const handleExportCSV = () => {
+    if (reports.length === 0) return;
+    const headers = ['Product ID', 'Product Name', 'Risk Level', 'Current Price', 'Suggested Price', 'Markdown %', 'Status'];
+    const rows = reports.map(r => [
+      r.product_id || '',
+      `"${(r.product_name || '').replace(/"/g, '""')}"`,
+      r.risk_level || '',
+      r.current_price || 0,
+      r.suggested_price || 0,
+      r.markdown_percentage?.toFixed(1) || '0.0',
+      r.status || ''
+    ]);
+    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'executive_reports.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="flex flex-col gap-6 flex-1">
@@ -36,7 +57,7 @@ export default function Reports() {
           <h1 className="text-2xl font-bold tracking-tight">Executive Reports</h1>
           <p className="text-sm text-muted-foreground mt-1">{reports.length} report{reports.length !== 1 ? 's' : ''} generated</p>
         </div>
-        <Button variant="outline" size="sm" className="gap-2">
+        <Button variant="outline" size="sm" className="gap-2" onClick={handleExportCSV}>
           <Download className="h-3.5 w-3.5" /> Export CSV
         </Button>
       </div>

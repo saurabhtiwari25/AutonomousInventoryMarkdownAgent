@@ -129,10 +129,11 @@ export default function InventoryList() {
         </div>
 
         <Button
-
-          className="px-5 py-2"
-          onClick={() => handleOpenModal()} size="sm">
-          <Plus />
+          className="gap-2 px-4 py-2"
+          onClick={() => handleOpenModal()} 
+          size="sm"
+        >
+          <Plus className="h-4 w-4" />
           Add Item
         </Button>
       </div>
