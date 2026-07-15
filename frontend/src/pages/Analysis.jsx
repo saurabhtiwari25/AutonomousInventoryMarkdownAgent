@@ -47,6 +47,8 @@ export default function Analysis() {
     { name: 'Report Agent', desc: 'Report generation' },
   ];
 
+  
+
   return (
     <div className="flex flex-col gap-8 flex-1">
       <div className="flex justify-between items-start">
@@ -73,6 +75,9 @@ export default function Analysis() {
           )}
         </Button>
       </div>
+
+      
+          
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 flex-1">
         {/* Agent Pipeline */}

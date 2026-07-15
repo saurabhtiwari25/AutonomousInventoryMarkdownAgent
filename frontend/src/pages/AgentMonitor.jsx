@@ -28,6 +28,18 @@ export default function AgentMonitor() {
         duration: 0,
         message: "Ready",
       },
+      Sales_Analysis_Agent: {
+        status: "Idle",
+        last_run: "Never",
+        duration: 0,
+        message: "Ready",
+      },
+      SQL_Agent: {
+        status: "Idle",
+        last_run: "Never",
+        duration: 0,
+        message: "Ready",
+      },
       Pricing_Agent: {
         status: "Idle",
         last_run: "Never",
@@ -35,6 +47,12 @@ export default function AgentMonitor() {
         message: "Ready",
       },
       Risk_Analysis_Agent: {
+        status: "Idle",
+        last_run: "Never",
+        duration: 0,
+        message: "Ready",
+      },
+      Report_Agent: {
         status: "Idle",
         last_run: "Never",
         duration: 0,
@@ -101,21 +119,27 @@ export default function AgentMonitor() {
 
   const agentNames = [
     "Inventory_Agent",
+    "Sales_Analysis_Agent",
+    "SQL_Agent",
     "Pricing_Agent",
     "Risk_Analysis_Agent",
+    "Report_Agent"
   ];
 
   const getAgentIcon = (name) => {
     switch (name) {
       case "Inventory_Agent":
         return <Box className="h-5 w-5 text-blue-400" />;
-
+      case "Sales_Analysis_Agent":
+        return <Activity className="h-5 w-5 text-purple-400" />;
+      case "SQL_Agent":
+        return <Box className="h-5 w-5 text-yellow-400" />;
       case "Pricing_Agent":
         return <DollarSign className="h-5 w-5 text-emerald-400" />;
-
       case "Risk_Analysis_Agent":
         return <ShieldCheck className="h-5 w-5 text-orange-400" />;
-
+      case "Report_Agent":
+        return <Box className="h-5 w-5 text-pink-400" />;
       default:
         return <Box className="h-5 w-5" />;
     }
