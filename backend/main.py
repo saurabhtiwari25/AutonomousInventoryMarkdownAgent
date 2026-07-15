@@ -29,6 +29,7 @@ app.add_middleware(
 
 reports_store = {}
 agent_status = {}
+active_tasks = {}
 
 global_monitor_state = {
     "agents": {
@@ -121,6 +122,7 @@ def delete_inventory(product_id: str, db: Session = Depends(get_db)):
 async def analyze_inventory(data: Dict[str, Any]):
     task_id = str(uuid.uuid4())
     agent_status[task_id] = "started"
+    active_tasks[task_id] = data
     return {"task_id": task_id, "status": "started"}
 
 async def run_workflow_generator(task_id: str, payload: dict):
@@ -169,15 +171,18 @@ async def run_workflow_generator(task_id: str, payload: dict):
         yield f"data: {json.dumps({'node': 'ERROR', 'status': 'failed', 'error': str(e)})}\n\n"
 
 @app.get("/agent-status/{task_id}")
-async def stream_agent_status(task_id: str, product_id: str = "P001", product_name: str = "Test", current_price: float = 100.0, unit_cost: float = 50.0, stock_quantity: int = 1000, monthly_sales: int = 10):
-    payload = {
-        "product_id": product_id,
-        "product_name": product_name,
-        "current_price": current_price,
-        "unit_cost": unit_cost,
-        "stock_quantity": stock_quantity,
-        "monthly_sales": monthly_sales
-    }
+async def stream_agent_status(task_id: str):
+    # Retrieve the product data that was sent to /analyze
+    payload = active_tasks.get(task_id, {})
+    
+    # Fallback to defaults if something is missing
+    payload.setdefault("product_id", "P001")
+    payload.setdefault("product_name", "Test Product")
+    payload.setdefault("current_price", 100.0)
+    payload.setdefault("unit_cost", 50.0)
+    payload.setdefault("stock_quantity", 1000)
+    payload.setdefault("monthly_sales", 10)
+    
     return StreamingResponse(run_workflow_generator(task_id, payload), media_type="text/event-stream")
 
 @app.get("/report/{task_id}")

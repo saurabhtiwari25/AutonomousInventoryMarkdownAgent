@@ -1,33 +1,45 @@
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+
 export default function Settings() {
   return (
-    <div>
-      <h1>Settings</h1>
-      
-      <div className="card" style={{ maxWidth: '600px' }}>
-        <h2>General Configurations</h2>
-        
-        <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Maximum Allowed Markdown (%)</label>
-            <input 
-              type="number" 
-              defaultValue={30} 
-              style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border)', background: 'var(--bg-tertiary)', color: 'var(--text-primary)' }} 
-            />
-          </div>
-          
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Default Risk Threshold</label>
-            <select style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border)', background: 'var(--bg-tertiary)', color: 'var(--text-primary)' }}>
-              <option>Conservative (Requires approval for Medium/High)</option>
-              <option>Moderate (Requires approval for High)</option>
-              <option>Aggressive (Auto-approve all)</option>
-            </select>
-          </div>
-          
-          <button className="btn btn-primary" style={{ alignSelf: 'flex-start' }}>Save Changes</button>
-        </div>
+    <div className="flex flex-col gap-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
+        <p className="text-sm text-muted-foreground mt-1">Configure agent behavior and thresholds</p>
       </div>
+
+      <Card className="max-w-lg shadow-sm">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base font-semibold">General Configuration</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="max_markdown" className="text-xs font-medium">Maximum Allowed Markdown (%)</Label>
+              <Input id="max_markdown" type="number" defaultValue={30} />
+              <p className="text-xs text-muted-foreground">Agents will cap suggestions at this value.</p>
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="risk" className="text-xs font-medium">Default Risk Threshold</Label>
+              <Select defaultValue="conservative">
+                <SelectTrigger id="risk">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="conservative">Conservative</SelectItem>
+                  <SelectItem value="moderate">Moderate</SelectItem>
+                  <SelectItem value="aggressive">Aggressive</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <Button size="sm" className="self-start mt-1">Save Changes</Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

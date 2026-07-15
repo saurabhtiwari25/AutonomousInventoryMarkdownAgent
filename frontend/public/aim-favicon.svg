@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="brand-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  <rect width="256" height="256" rx="56" fill="#080812" />
+  <g filter="url(#glow)">
+    <!-- Isometric Cube / Package Outline -->
+    <path d="M128 52L60 90V166L128 204L196 166V90L128 52Z" fill="none" stroke="url(#brand-grad)" stroke-width="18" stroke-linejoin="round" />
+    <!-- Inner Y-lines -->
+    <path d="M60 90L128 130L196 90" fill="none" stroke="url(#brand-grad)" stroke-width="18" stroke-linejoin="round" />
+    <path d="M128 130V204" fill="none" stroke="url(#brand-grad)" stroke-width="18" stroke-linejoin="round" />
+    
+    <!-- AI Spark Core -->
+    <circle cx="128" cy="130" r="16" fill="#ffffff" />
+    <path d="M128 98L136 122L160 130L136 138L128 162L120 138L96 130L120 122Z" fill="#ffffff" />
+  </g>
+</svg>

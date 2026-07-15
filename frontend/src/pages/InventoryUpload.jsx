@@ -1,100 +1,86 @@
 import { useState } from 'react';
-import { Upload, File } from 'lucide-react';
+import { Upload, File, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { uploadInventory } from '../api';
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export default function InventoryUpload() {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
+  const [dragOver, setDragOver] = useState(false);
   const navigate = useNavigate();
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setFile(e.dataTransfer.files[0]);
-    }
-  };
-
-  const handleFileChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-    }
-  };
+  const handleDrop = (e) => { e.preventDefault(); setDragOver(false); if (e.dataTransfer.files?.[0]) setFile(e.dataTransfer.files[0]); };
+  const handleFileChange = (e) => { if (e.target.files?.[0]) setFile(e.target.files[0]); };
 
   const handleUpload = async () => {
     if (!file) return;
-    setUploading(true);
-    setSuccessMsg("");
-
+    setUploading(true); setSuccessMsg("");
     try {
       const res = await uploadInventory(file);
       setSuccessMsg(`Successfully uploaded ${res.saved_count} items!`);
       setTimeout(() => navigate('/inventory-list'), 1500);
-    } catch (err) {
-      console.error(err);
-      alert('Upload failed.');
-    } finally {
-      setUploading(false);
-    }
+    } catch (err) { console.error(err); alert('Upload failed.'); }
+    finally { setUploading(false); }
   };
 
   return (
-    <div>
-      <h1>Upload Inventory Data</h1>
-      
-      <div className="card" style={{ maxWidth: '600px', margin: '0 auto' }}>
+    <div className="flex flex-col gap-6 items-center flex-1">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold tracking-tight">Upload Inventory Data</h1>
+        <p className="text-sm text-muted-foreground mt-1">Import your product catalog via CSV or JSON</p>
+      </div>
+
+      <Card className="w-full max-w-xl p-6 shadow-sm">
         <div 
-          className="upload-zone"
-          onDragOver={(e) => e.preventDefault()}
+          className={`flex flex-col items-center justify-center p-10 border-2 border-dashed rounded-xl transition-all cursor-pointer group ${
+            dragOver ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40 hover:bg-muted/30'
+          }`}
+          onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+          onDragLeave={() => setDragOver(false)}
           onDrop={handleDrop}
           onClick={() => document.getElementById('file-upload').click()}
         >
-          <Upload size={48} color="var(--text-secondary)" style={{ marginBottom: '1rem' }} />
-          <h3>Drag & Drop CSV/JSON File</h3>
-          <p style={{ color: 'var(--text-secondary)', marginTop: '0.5rem' }}>or click to browse</p>
-          <input 
-            id="file-upload" 
-            type="file" 
-            accept=".csv,.json" 
-            style={{ display: 'none' }} 
-            onChange={handleFileChange}
-          />
+          <div className="p-4 rounded-xl bg-primary/10 mb-4 group-hover:scale-110 transition-transform">
+            <Upload className="h-8 w-8 text-primary" />
+          </div>
+          <h3 className="text-base font-semibold">Drag & Drop File</h3>
+          <p className="text-xs text-muted-foreground mt-1">CSV or JSON · Max 10MB</p>
+          <input id="file-upload" type="file" accept=".csv,.json" className="hidden" onChange={handleFileChange} />
         </div>
 
-        <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'var(--bg-tertiary)', borderRadius: '0.5rem', border: '1px solid var(--border-color)' }}>
-          <h4 style={{ marginBottom: '1rem', color: 'var(--text-primary)', fontSize: '1rem', fontWeight: '600' }}>Expected CSV Format</h4>
-          <p style={{ marginBottom: '0.75rem', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-            Your file should include the following columns and look like this:
-          </p>
-          <div style={{ background: 'var(--bg-secondary)', padding: '1rem', borderRadius: '0.5rem', overflowX: 'auto', border: '1px solid var(--border-color)' }}>
-            <pre style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-primary)', fontFamily: 'monospace', whiteSpace: 'pre-wrap' }}>
+        {/* Format hint */}
+        <div className="mt-5 p-4 bg-muted/30 rounded-lg border">
+          <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Expected Format</h4>
+          <pre className="text-[11px] text-muted-foreground font-mono leading-relaxed overflow-x-auto">
 {`product_id,product_name,category,stock_quantity,unit_cost,current_price,monthly_sales
-P001,Premium Wireless Headphones,Electronics,150,45.50,129.99,35
-P002,Ergonomic Office Chair,Furniture,42,85.00,249.99,12`}
-            </pre>
-          </div>
+P001,Wireless Headphones,Electronics,150,45.50,129.99,35`}
+          </pre>
         </div>
-        
+
+        {/* Selected file */}
         {file && (
-          <div style={{ marginTop: '2rem', padding: '1rem', background: 'var(--bg-tertiary)', borderRadius: '0.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <File size={24} color="var(--accent-primary)" />
-            <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 500 }}>{file.name}</div>
-              <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{(file.size / 1024).toFixed(2)} KB</div>
+          <div className="mt-4 p-3 bg-muted border rounded-lg flex items-center gap-3">
+            <File className="h-5 w-5 text-primary shrink-0" />
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-medium truncate">{file.name}</div>
+              <div className="text-xs text-muted-foreground">{(file.size / 1024).toFixed(1)} KB</div>
             </div>
-            <button className="btn btn-primary" onClick={handleUpload} disabled={uploading}>
-              {uploading ? 'Uploading...' : 'Process File'}
-            </button>
+            <Button onClick={handleUpload} disabled={uploading} size="sm">
+              {uploading ? 'Uploading...' : 'Process'}
+            </Button>
           </div>
         )}
 
+        {/* Success */}
         {successMsg && (
-           <div style={{ marginTop: '1rem', padding: '1rem', background: 'rgba(46, 213, 115, 0.1)', color: 'var(--success)', borderRadius: '0.5rem', textAlign: 'center' }}>
-             {successMsg}
-           </div>
+          <div className="mt-4 p-3 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-lg text-sm font-medium flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4 shrink-0" /> {successMsg}
+          </div>
         )}
-      </div>
+      </Card>
     </div>
   );
 }
