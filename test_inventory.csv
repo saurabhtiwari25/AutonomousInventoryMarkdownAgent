@@ -1,0 +1,11 @@
+product_id,product_name,category,stock_quantity,unit_cost,current_price,monthly_sales
+P001,Test Widget,Widgets,100,10.0,20.0,50
+P002,Another Widget,Widgets,50,15.0,25.0,10
+P003,Widgets Pro,Widgets,25,20.0,40.0,5
+P004,Super Widget,Widgets,0,5.0,10.0,0
+P005,Mega Widget,Widgets,10,30.0,60.0,2
+P006,Test Gadget,Gadgets,50,12.0,24.0,30
+P007,Gadget Pro,Gadgets,20,18.0,36.0,10
+P008,Super Gadget,Gadgets,5,25.0,50.0,2
+P009,Test Doodad,Doodads,200,5.0,10.0,100
+P010,Doodad Pro,Doodads,80,8.0,16.0,40

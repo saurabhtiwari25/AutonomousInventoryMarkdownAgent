@@ -56,29 +56,33 @@ export default function Dashboard() {
       label: "Total Products",
       value: stats.total_items,
       icon: Package,
-      accent: "text-blue-500 dark:text-blue-400",
-      iconBg: "bg-blue-500/10",
+      accent: "text-blue-600 dark:text-blue-400",
+      iconBg: "bg-blue-100 dark:bg-blue-500/20",
+      borderAccent: "border-l-blue-500",
     },
     {
       label: "Out of Stock",
       value: stats.out_of_stock,
       icon: AlertTriangle,
-      accent: "text-amber-500 dark:text-amber-400",
-      iconBg: "bg-amber-500/10",
+      accent: "text-amber-600 dark:text-amber-400",
+      iconBg: "bg-amber-100 dark:bg-amber-500/20",
+      borderAccent: "border-l-amber-500",
     },
     {
       label: "Active Agents",
       value: stats.active_agents,
       icon: Zap,
-      accent: "text-violet-500 dark:text-violet-400",
-      iconBg: "bg-violet-500/10",
+      accent: "text-violet-600 dark:text-violet-400",
+      iconBg: "bg-violet-100 dark:bg-violet-500/20",
+      borderAccent: "border-l-violet-500",
     },
     {
       label: "Total Reports",
       value: stats.total_reports,
       icon: BarChart3,
-      accent: "text-emerald-500 dark:text-emerald-400",
-      iconBg: "bg-emerald-500/10",
+      accent: "text-emerald-600 dark:text-emerald-400",
+      iconBg: "bg-emerald-100 dark:bg-emerald-500/20",
+      borderAccent: "border-l-emerald-500",
     },
   ];
 
@@ -99,16 +103,16 @@ export default function Dashboard() {
         {kpiCards.map((kpi) => (
           <Card
             key={kpi.label}
-            className="rounded-lg transition-all duration-200 hover:shadow-lg"
+            className={`transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md border-l-4 ${kpi.borderAccent}`}
           >
-            <CardContent className="p-8">
+            <CardContent className="!p-8">
               <div className="flex items-start justify-between">
-                <div className="space-y-4">
-                  <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                <div className="space-y-3">
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
                     {kpi.label}
                   </p>
 
-                  <div className="text-4xl font-bold leading-none">
+                  <div className="text-4xl font-bold leading-none tracking-tight">
                     {loading ? (
                       <span className="animate-pulse text-muted-foreground/40">
                         —
@@ -120,9 +124,9 @@ export default function Dashboard() {
                 </div>
 
                 <div
-                  className={`flex h-12 w-12 items-center justify-center rounded-lg ${kpi.iconBg}`}
+                  className={`flex h-11 w-11 items-center justify-center rounded-xl ${kpi.iconBg}`}
                 >
-                  <kpi.icon className={`h-6 w-6 ${kpi.accent}`} />
+                  <kpi.icon className={`h-5 w-5 ${kpi.accent}`} />
                 </div>
               </div>
             </CardContent>
@@ -133,23 +137,25 @@ export default function Dashboard() {
       {/* Bottom Section */}
       <div className="grid flex-1 grid-cols-1 gap-5 lg:grid-cols-5">
         {/* Recent Analyses */}
-        <Card className="rounded-lg lg:col-span-3">
-          <CardHeader className="px-8 pt-8 pb-5">
+        <Card className="lg:col-span-3">
+          <CardHeader className="!px-8 !pt-8 !pb-5">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg font-semibold">
+              <CardTitle className="text-base font-semibold">
                 Recent Analyses
               </CardTitle>
-              <Clock className="h-5 w-5 text-muted-foreground" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted">
+                <Clock className="h-4 w-4 text-muted-foreground" />
+              </div>
             </div>
           </CardHeader>
 
-          <CardContent className="px-8 pb-8 pt-0">
+          <CardContent className="!px-8 !pb-8 !pt-0">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Product ID</TableHead>
-                  <TableHead>Product Name</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead className="text-xs">Product ID</TableHead>
+                  <TableHead className="text-xs">Product Name</TableHead>
+                  <TableHead className="text-xs">Status</TableHead>
                 </TableRow>
               </TableHeader>
 
@@ -165,25 +171,25 @@ export default function Dashboard() {
                   </TableRow>
                 ) : (
                   reports.map((report, idx) => (
-                    <TableRow key={idx}>
-                      <TableCell className="font-mono text-xs">
+                    <TableRow key={idx} className="hover:bg-muted/40">
+                      <TableCell className="font-mono text-xs text-muted-foreground">
                         {report.product_id}
                       </TableCell>
 
-                      <TableCell className="font-medium">
+                      <TableCell className="text-sm font-medium">
                         {report.product_name}
                       </TableCell>
 
                       <TableCell>
-                        <Badge
-                          variant={
+                        <span
+                          className={`inline-flex items-center rounded-md px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${
                             report.status === "Approved"
-                              ? "default"
-                              : "secondary"
-                          }
+                              ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 ring-emerald-600/20"
+                              : "bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 ring-amber-600/20"
+                          }`}
                         >
                           {report.status || "Completed"}
-                        </Badge>
+                        </span>
                       </TableCell>
                     </TableRow>
                   ))
@@ -194,34 +200,36 @@ export default function Dashboard() {
         </Card>
 
         {/* Agent Activity */}
-        <Card className="rounded-lg lg:col-span-2">
-          <CardHeader className="px-8 pt-8 pb-5">
+        <Card className="lg:col-span-2">
+          <CardHeader className="!px-8 !pt-8 !pb-5">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg font-semibold">
+              <CardTitle className="text-base font-semibold">
                 Agent Activity
               </CardTitle>
-              <Zap className="h-5 w-5 text-muted-foreground" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted">
+                <Zap className="h-4 w-4 text-muted-foreground" />
+              </div>
             </div>
           </CardHeader>
 
-          <CardContent className="px-8 pb-8 pt-0">
+          <CardContent className="!px-8 !pb-8 !pt-0">
             <div className="space-y-3">
               {reports.length === 0 ? (
-                <div className="py-12 text-center text-muted-foreground">
+                <div className="py-12 text-center text-sm text-muted-foreground">
                   No recent activity.
                 </div>
               ) : (
                 reports.slice(0, 4).map((report, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center gap-4 rounded-lg border p-5 transition-colors hover:bg-muted/40"
+                    className="flex items-center gap-4 rounded-xl border border-[#e5e5e5] dark:border-[#2a2a2a] bg-[#fafafa] dark:bg-[#0a0a0a] p-4 transition-all hover:bg-[#f0f0f0] dark:hover:bg-[#151515]"
                   >
                     <div
-                      className={`flex h-10 w-10 items-center justify-center rounded-lg ${report.risk_level === "HIGH"
-                          ? "bg-destructive/10 text-destructive"
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${report.risk_level === "HIGH"
+                          ? "bg-red-100 dark:bg-red-500/15 text-red-600 dark:text-red-400"
                           : report.markdown_percentage > 0
-                            ? "bg-blue-500/10 text-blue-500"
-                            : "bg-emerald-500/10 text-emerald-500"
+                            ? "bg-blue-100 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400"
+                            : "bg-emerald-100 dark:bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
                         }`}
                     >
                       {report.risk_level === "HIGH" ? (

@@ -33,7 +33,7 @@ export default function InventoryUpload() {
         <p className="text-sm text-muted-foreground mt-1">Import your product catalog via CSV or JSON</p>
       </div>
 
-      <Card className="w-full max-w-xl p-6 shadow-sm">
+      <Card className="w-full max-w-xl !p-6 shadow-sm">
         <div 
           className={`flex flex-col items-center justify-center p-10 border-2 border-dashed rounded-xl transition-all cursor-pointer group ${
             dragOver ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40 hover:bg-muted/30'
@@ -68,7 +68,11 @@ P001,Wireless Headphones,Electronics,150,45.50,129.99,35`}
               <div className="text-sm font-medium truncate">{file.name}</div>
               <div className="text-xs text-muted-foreground">{(file.size / 1024).toFixed(1)} KB</div>
             </div>
-            <Button onClick={handleUpload} disabled={uploading} size="sm">
+            <Button
+              onClick={handleUpload}
+              disabled={uploading}
+              className="rounded-md !px-8 !py-3 !h-11 bg-[#eaeaea] dark:bg-[#333] text-[#111] dark:text-[#fafafa] border-[#ccc] dark:border-[#555] hover:bg-[#ddd] dark:hover:bg-[#444] text-sm font-medium"
+            >
               {uploading ? 'Uploading...' : 'Process'}
             </Button>
           </div>

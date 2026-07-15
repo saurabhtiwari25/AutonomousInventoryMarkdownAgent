@@ -20,6 +20,7 @@ def risk_agent_node(state: AgentState) -> AgentState:
     Respond with a JSON object exactly like this:
     {{"risk_score": "High", "approval_status": "Requires Approval", "risk_reason": "Markdown price is below unit cost."}}
     Do not wrap in markdown tags like ```json.
+    CRITICAL INSTRUCTION: Do NOT attempt to call any tools. Do not output any XML or function tags.
     """
     
     response = llm.invoke(prompt)

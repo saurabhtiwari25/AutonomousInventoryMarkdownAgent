@@ -1,16 +1,17 @@
-const API_BASE = 'https://autonomousinventorymarkdownagent.onrender.com';
+const API_BASE = 'http://localhost:8000';
 
 export async function uploadInventory(file) {
   const formData = new FormData();
   formData.append('file', file);
 
-  const res = await fetch(`${API_BASE}/upload-inventory`, {
+  const res = await fetch(`${API_BASE}/inventory/upload`, {
     method: 'POST',
     body: formData,
   });
   if (!res.ok) throw new Error('Upload failed');
   return await res.json();
 }
+
 
 export async function getDashboardStats() {
   const res = await fetch(`${API_BASE}/dashboard-stats`);
@@ -52,6 +53,14 @@ export async function deleteInventoryItem(productId) {
   return await res.json();
 }
 
+export async function deleteAllInventory() {
+  const res = await fetch(`${API_BASE}/inventory`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) throw new Error('Failed to delete all items');
+  return await res.json();
+}
+
 export async function getReports() {
   const res = await fetch(`${API_BASE}/reports`);
   if (!res.ok) throw new Error('Failed to fetch reports');
@@ -63,6 +72,14 @@ export async function approveReport(taskId) {
     method: 'POST',
   });
   if (!res.ok) throw new Error('Failed to approve report');
+  return await res.json();
+}
+
+export async function rejectReport(taskId) {
+  const res = await fetch(`${API_BASE}/report/${taskId}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) throw new Error('Failed to reject report');
   return await res.json();
 }
 

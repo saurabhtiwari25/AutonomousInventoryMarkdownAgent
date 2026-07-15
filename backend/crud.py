@@ -82,6 +82,16 @@ def delete_product(db: Session, product_id: str):
         return True
     return False
 
+def delete_all_products(db: Session):
+    db.query(domain.Inventory).delete()
+    db.query(domain.Profitability).delete()
+    db.query(domain.Sale).delete()
+    db.query(domain.PricingHistory).delete()
+    db.query(domain.Product).delete()
+    db.commit()
+    return True
+
+
 def get_dashboard_stats(db: Session, active_agents: int, total_reports: int):
     total_items = db.query(domain.Product).count()
     out_of_stock = db.query(domain.Inventory).filter(domain.Inventory.stock_quantity <= 0).count()

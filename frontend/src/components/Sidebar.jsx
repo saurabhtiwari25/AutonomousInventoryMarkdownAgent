@@ -13,8 +13,9 @@ export default function Sidebar() {
 
   return (
     <aside className="w-[240px] bg-background border-r border-border flex flex-col shrink-0">
+      <div className="h-[52px]" />
       {/* Nav */}
-      <nav className="flex flex-col gap-0.5 px-3 pt-3 flex-1">
+      <nav className="flex flex-col gap-0.5 px-3 pt-4 flex-1">
         <NavLink to="/" className={navItemClass} end>
           <LayoutDashboard size={15} />
           Dashboard

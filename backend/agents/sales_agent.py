@@ -14,6 +14,7 @@ def sales_agent_node(state: AgentState) -> AgentState:
     Call query_sales_history to fetch recent sales data if available.
     Then, calculate and return a single decimal number representing the sales velocity 
     (ratio of monthly_sales to current stock). Do not include any other text.
+    CRITICAL INSTRUCTION: Do NOT attempt to call any tools other than query_sales_history. Do not invent tools.
     """
     
     response = llm.invoke(prompt)

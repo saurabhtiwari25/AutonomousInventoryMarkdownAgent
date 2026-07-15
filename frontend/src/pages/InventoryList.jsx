@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getInventory, createInventoryItem, updateInventoryItem, deleteInventoryItem } from '../api';
+import { getInventory, createInventoryItem, updateInventoryItem, deleteInventoryItem, deleteAllInventory } from '../api';
 import { Edit2, Trash2, Plus, Search } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
@@ -105,6 +105,18 @@ export default function InventoryList() {
     }
   };
 
+  const handleDeleteAll = async () => {
+    if (window.confirm('Are you sure you want to remove ALL inventory items? This cannot be undone.')) {
+      try {
+        await deleteAllInventory();
+        fetchInventory();
+      } catch (err) {
+        console.error(err);
+        alert('Failed to delete all items');
+      }
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -128,14 +140,22 @@ export default function InventoryList() {
           </p>
         </div>
 
-        <Button
-          className="gap-2 px-4 py-2"
-          onClick={() => handleOpenModal()}
-          size="sm"
-        >
-          <Plus className="h-4 w-4" />
-          Add Item
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            className="rounded-md !px-8 !py-3 !h-11 bg-destructive text-destructive-foreground hover:bg-destructive/90 text-sm font-medium gap-2"
+            onClick={handleDeleteAll}
+          >
+            <Trash2 className="h-4 w-4" />
+            Remove All
+          </Button>
+          <Button
+            className="rounded-md !px-8 !py-3 !h-11 bg-[#eaeaea] dark:bg-[#333] text-[#111] dark:text-[#fafafa] border-[#ccc] dark:border-[#555] hover:bg-[#ddd] dark:hover:bg-[#444] text-sm font-medium gap-2"
+            onClick={() => handleOpenModal()}
+          >
+            <Plus className="h-4 w-4" />
+            Add Item
+          </Button>
+        </div>
       </div>
 
       {/* Fixed Search Bar */}
@@ -153,7 +173,7 @@ export default function InventoryList() {
       </div>
 
       <Card className="flex-1 overflow-hidden">
-        <CardContent className="p-0">
+        <CardContent className="!p-0">
           {loading ? (
             <div className="animate-pulse p-12 text-center text-muted-foreground">
               Loading inventory...
@@ -231,8 +251,7 @@ export default function InventoryList() {
                             <Button
                               variant="ghost"
                               size="icon-sm"
-                              className="px-5 py-2"
-
+                              className="rounded-md bg-transparent dark:bg-transparent hover:bg-[#eaeaea] dark:hover:bg-[#333]"
                               onClick={() => handleOpenModal(item)}
                             >
                               <Edit2 />
@@ -241,7 +260,7 @@ export default function InventoryList() {
                             <Button
                               variant="ghost"
                               size="icon-sm"
-                              className="hover:text-destructive px-5 py-2"
+                              className="rounded-md bg-transparent dark:bg-transparent hover:bg-[#eaeaea] dark:hover:bg-[#333] hover:text-destructive"
                               onClick={() => handleDelete(item.product_id)}
                             >
                               <Trash2 />
@@ -440,15 +459,15 @@ export default function InventoryList() {
 
               <Button
                 type="button"
-                variant="outline"
-                className="px-5 py-2"
-
+                className="rounded-md !px-8 !py-3 !h-11 bg-[#eaeaea] dark:bg-[#333] text-[#111] dark:text-[#fafafa] border-[#ccc] dark:border-[#555] hover:bg-[#ddd] dark:hover:bg-[#444] text-sm font-medium"
                 onClick={() => setShowModal(false)}
               >
                 Cancel
               </Button>
 
-              <Button type="submit" className="px-5 py-2"
+              <Button
+                type="submit"
+                className="rounded-md !px-8 !py-3 !h-11 bg-[#eaeaea] dark:bg-[#333] text-[#111] dark:text-[#fafafa] border-[#ccc] dark:border-[#555] hover:bg-[#ddd] dark:hover:bg-[#444] text-sm font-medium"
               >
                 {editingId ? "Save Changes" : "Create Item"}
               </Button>

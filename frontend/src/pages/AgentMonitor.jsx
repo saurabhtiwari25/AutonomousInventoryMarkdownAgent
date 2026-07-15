@@ -65,7 +65,7 @@ export default function AgentMonitor() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await fetch("https://autonomousinventorymarkdownagent.onrender.com/monitor-stats");
+        const response = await fetch("http://localhost:8000/monitor-stats");
 
         if (!response.ok) return;
 
@@ -168,7 +168,7 @@ export default function AgentMonitor() {
               key={name}
               className="overflow-hidden border-border/60 transition-all duration-200 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl"
             >
-              <CardHeader className="pb-5">
+              <CardHeader className="!p-6 !pb-5">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
                     {getAgentIcon(name)}
@@ -190,7 +190,7 @@ export default function AgentMonitor() {
                 </div>
               </CardHeader>
 
-              <CardContent className="space-y-5 pt-0">
+              <CardContent className="space-y-5 !p-6 !pt-0">
                 <div className="grid grid-cols-2 gap-6">
                   <div>
                     <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
@@ -198,9 +198,9 @@ export default function AgentMonitor() {
                     </p>
 
                     <p className="mt-2 text-base font-semibold">
-                      {agent.last_run && agent.last_run !== "Never" 
-                        ? (!isNaN(new Date(agent.last_run).getTime()) 
-                          ? new Date(agent.last_run).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true }) 
+                      {agent.last_run && agent.last_run !== "Never"
+                        ? (!isNaN(new Date(agent.last_run).getTime())
+                          ? new Date(agent.last_run).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true })
                           : agent.last_run)
                         : "Never"}
                     </p>
@@ -235,7 +235,7 @@ export default function AgentMonitor() {
       {/* MCP History */}
 
       <Card className="overflow-hidden border-border/60 shadow-sm">
-        <CardHeader className="border-b bg-muted/20">
+        <CardHeader className="border-b bg-muted/20 !p-6">
           <div className="flex items-center gap-2">
             <Clock className="h-5 w-5 text-muted-foreground" />
 
@@ -245,7 +245,7 @@ export default function AgentMonitor() {
           </div>
         </CardHeader>
 
-        <CardContent className="p-0">
+        <CardContent className="!p-0">
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/30">

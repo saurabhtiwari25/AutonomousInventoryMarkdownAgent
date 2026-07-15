@@ -57,8 +57,11 @@ export default function Reports() {
           <h1 className="text-2xl font-bold tracking-tight">Executive Reports</h1>
           <p className="text-sm text-muted-foreground mt-1">{reports.length} report{reports.length !== 1 ? 's' : ''} generated</p>
         </div>
-        <Button variant="outline" size="sm" className="gap-2" onClick={handleExportCSV}>
-          <Download className="h-3.5 w-3.5" /> Export CSV
+        <Button
+          className="rounded-md !px-8 !py-3 !h-11 bg-[#eaeaea] dark:bg-[#333] text-[#111] dark:text-[#fafafa] border-[#ccc] dark:border-[#555] hover:bg-[#ddd] dark:hover:bg-[#444] text-sm font-medium gap-2"
+          onClick={handleExportCSV}
+        >
+          <Download className="h-4 w-4" /> Export CSV
         </Button>
       </div>
 
@@ -73,7 +76,7 @@ export default function Reports() {
           {reports.map((r) => (
             <Card key={r.task_id} className={`shadow-sm transition-all hover:shadow-md ${r.status === 'Approved' ? 'border-emerald-500/50 ring-1 ring-emerald-500/20' : ''
               }`}>
-              <CardContent className="pt-5 flex flex-col h-full">
+              <CardContent className="!p-6 flex flex-col h-full">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="text-sm font-semibold">{r.product_name}</h3>
@@ -91,6 +94,12 @@ export default function Reports() {
                   <div className="flex justify-between text-sm"><span className="text-muted-foreground">Current</span><span>{formatINR(r.current_price)}</span></div>
                   <div className="flex justify-between text-sm"><span className="text-muted-foreground">Suggested</span><span className="text-primary font-semibold">{formatINR(r.suggested_price)}</span></div>
                   <div className="flex justify-between text-sm"><span className="text-muted-foreground">Markdown</span><span>{r.markdown_percentage?.toFixed(1) ?? '0.0'}%</span></div>
+                  {r.markdown_reasoning && (
+                    <div className="flex flex-col text-sm pt-2 mt-2 border-t border-border">
+                      <span className="text-muted-foreground mb-1">AI Reasoning</span>
+                      <span className="text-xs text-muted-foreground/80 leading-relaxed italic">"{r.markdown_reasoning}"</span>
+                    </div>
+                  )}
                   {r.status && (
                     <div className="flex justify-between text-sm pt-2 mt-2 border-t border-border">
                       <span className="text-muted-foreground">Status</span>

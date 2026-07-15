@@ -25,10 +25,6 @@ function App() {
           {/* Right Controls */}
           <div className="ml-auto flex items-center gap-3">
             <ModeToggle />
-            <div className="flex items-center gap-2">
-              <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[11px] text-muted-foreground">Online</span>
-            </div>
           </div>
         </header>
 

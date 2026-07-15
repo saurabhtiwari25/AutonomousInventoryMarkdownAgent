@@ -1,10 +1,10 @@
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_groq import ChatGroq
 from core.config import settings
 
 def get_llm(temperature=0.3):
-    """Get a configured Gemini LLM instance for agent use."""
-    return ChatGoogleGenerativeAI(
-        model="gemini-2.0-flash",
-        google_api_key=settings.GEMINI_API_KEY,
+    """Get a configured Groq LLM instance for agent use."""
+    return ChatGroq(
+        model="llama-3.3-70b-versatile",
+        api_key=settings.GROQ_API_KEY,
         temperature=temperature,
     )
