@@ -11,6 +11,7 @@ from typing import Dict, Any
 from core.database import get_db, SessionLocal
 from models.domain import AgentTask, AgentReport, SystemState
 from agents.workflow import app_workflow
+import traceback
 
 router = APIRouter(tags=["agents"])
 
@@ -44,10 +45,18 @@ async def run_workflow_generator(task_id: str, payload: dict):
         "stock_quantity": payload.get("stock_quantity", 1000),
         "monthly_sales": payload.get("monthly_sales", 10)
     }
+
+    print("=" * 80)
+    print("Initial state:", state)
+    print("=" * 80)
     
     try:
         start_time = time.time()
+
+        print("Starting workflow...")
+
         for output in app_workflow.stream(state):
+            print("Workflow output:", output)
             for key, value in output.items():
                 node_name = key
                 
@@ -100,12 +109,28 @@ async def run_workflow_generator(task_id: str, payload: dict):
             
         yield f"data: {json.dumps({'node': 'END', 'status': 'completed', 'task_id': task_id})}\n\n"
     except Exception as e:
+        traceback.print_exc()
+
+        print("=" * 80)
+        print("Exception type:", type(e).__name__)
+        print("Exception repr:", repr(e))
+        print("=" * 80)
+
         with SessionLocal() as db:
-            db_task = db.query(AgentTask).filter(AgentTask.task_id == task_id).first()
+            db_task = db.query(AgentTask).filter(
+                AgentTask.task_id == task_id
+            ).first()
+
             if db_task:
                 db_task.status = "failed"
+
             db.commit()
-        yield f"data: {json.dumps({'node': 'ERROR', 'status': 'failed', 'error': str(e)})}\n\n"
+
+        yield f"data: {json.dumps({
+            'node': 'ERROR',
+            'status': 'failed',
+            'error': repr(e)
+        })}\n\n"
 
 @router.get("/agent-status/{task_id}")
 async def stream_agent_status(task_id: str, db: Session = Depends(get_db)):
