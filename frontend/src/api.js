@@ -1,9 +1,9 @@
-const API_BASE = 'http://localhost:8000';
+const API_BASE = 'https://autonomousinventorymarkdownagent.onrender.com/:8000';
 
 export async function uploadInventory(file) {
   const formData = new FormData();
   formData.append('file', file);
-  
+
   const res = await fetch(`${API_BASE}/upload-inventory`, {
     method: 'POST',
     body: formData,
