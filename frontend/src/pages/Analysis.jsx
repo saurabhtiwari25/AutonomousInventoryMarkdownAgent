@@ -28,7 +28,7 @@ export default function Analysis() {
 
   useEffect(() => {
     if (!taskId || !running) return;
-    const es = new EventSource(`http://localhost:8000/agent-status/${taskId}`);
+    const es = new EventSource(`https://autonomousinventorymarkdownagent.onrender.com/agent-status/${taskId}`);
     es.onmessage = (e) => {
       const data = JSON.parse(e.data);
       setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), message: `[${data.node}] ${data.status}` }]);
