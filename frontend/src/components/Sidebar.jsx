@@ -1,16 +1,14 @@
 import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, UploadCloud, Activity, ShieldAlert, FileText, Settings as SettingsIcon, Package, HelpCircle } from 'lucide-react';
-import { buttonVariants } from './ui/button';
 import { cn } from '@/lib/utils';
 
 export default function Sidebar() {
   const navItemClass = ({ isActive }) =>
     cn(
-      buttonVariants({ variant: "ghost", size: "sm" }),
-      "justify-center gap-3 w-full h-10 text-[13px] font-normal no-underline",
+      "inline-flex items-center justify-center gap-3 w-full h-10 px-3 rounded-lg text-[13px] font-normal no-underline transition-colors select-none cursor-pointer",
       isActive
         ? "bg-secondary text-foreground font-medium"
-        : "text-muted-foreground"
+        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
     );
 
   return (

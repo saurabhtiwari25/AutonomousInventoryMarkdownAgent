@@ -130,7 +130,7 @@ export default function InventoryList() {
 
         <Button
           className="gap-2 px-4 py-2"
-          onClick={() => handleOpenModal()} 
+          onClick={() => handleOpenModal()}
           size="sm"
         >
           <Plus className="h-4 w-4" />

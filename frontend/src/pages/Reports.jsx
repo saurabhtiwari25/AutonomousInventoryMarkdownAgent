@@ -103,7 +103,7 @@ export default function Reports() {
 
                 {r.status !== 'Approved' && (
                   <div className="flex gap-2 mt-auto">
-                    <Button size="sm" className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => handleApprove(r.task_id)}>Approve</Button>
+                    <Button size="sm" className="flex-1" onClick={() => handleApprove(r.task_id)}>Approve</Button>
                     <Button
                       size="sm"
                       variant="outline"
