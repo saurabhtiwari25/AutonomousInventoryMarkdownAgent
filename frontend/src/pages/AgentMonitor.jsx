@@ -65,7 +65,7 @@ export default function AgentMonitor() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await fetch("http://localhost:8000/monitor-stats");
+        const response = await fetch("https://autonomousinventorymarkdownagent.onrender.com/monitor-stats");
 
         if (!response.ok) return;
 
