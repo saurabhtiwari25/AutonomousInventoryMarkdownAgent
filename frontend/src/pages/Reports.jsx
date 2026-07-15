@@ -23,6 +23,10 @@ export default function Reports() {
     catch (e) { console.error(e); alert("Failed to approve"); }
   };
 
+  const handleReject = (id) => {
+    setReports((prev) => prev.filter((r) => r.task_id !== id));
+  };
+
   return (
     <div className="flex flex-col gap-6 flex-1">
       <div className="flex justify-between items-center">
@@ -44,20 +48,18 @@ export default function Reports() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {reports.map((r) => (
-            <Card key={r.task_id} className={`shadow-sm transition-all hover:shadow-md ${
-              r.status === 'Approved' ? 'border-emerald-500/50 ring-1 ring-emerald-500/20' : ''
-            }`}>
+            <Card key={r.task_id} className={`shadow-sm transition-all hover:shadow-md ${r.status === 'Approved' ? 'border-emerald-500/50 ring-1 ring-emerald-500/20' : ''
+              }`}>
               <CardContent className="pt-5 flex flex-col h-full">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="text-sm font-semibold">{r.product_name}</h3>
                     <span className="text-xs text-muted-foreground font-mono">{r.product_id}</span>
                   </div>
-                  <Badge variant="secondary" className={`text-[10px] border ${
-                    r.risk_level === 'High' ? 'bg-destructive/15 text-destructive border-destructive/20' :
+                  <Badge variant="secondary" className={`text-[10px] border ${r.risk_level === 'High' ? 'bg-destructive/15 text-destructive border-destructive/20' :
                     r.risk_level === 'Medium' ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/20' :
-                    'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
-                  }`}>
+                      'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                    }`}>
                     {r.risk_level} Risk
                   </Badge>
                 </div>
@@ -79,8 +81,14 @@ export default function Reports() {
                 {r.status !== 'Approved' && (
                   <div className="flex gap-2 mt-auto">
                     <Button size="sm" className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => handleApprove(r.task_id)}>Approve</Button>
-                    <Button size="sm" variant="outline" className="flex-1">Reject</Button>
-                  </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="flex-1"
+                      onClick={() => handleReject(r.task_id)}
+                    >
+                      Reject
+                    </Button>                  </div>
                 )}
               </CardContent>
             </Card>
