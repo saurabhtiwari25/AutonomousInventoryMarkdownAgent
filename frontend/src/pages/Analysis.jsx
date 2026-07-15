@@ -18,7 +18,7 @@ export default function Analysis() {
     try {
       setRunning(true);
       setLogs([{ time: new Date().toLocaleTimeString(), message: 'Initiating multi-agent workflow...' }]);
-      const res = await axios.post('http://localhost:8000/analyze', {
+      const res = await axios.post('https://autonomousinventorymarkdownagent.onrender.com/analyze', {
         product_id: "P001", product_name: "Test Laptop", current_price: 1200.0,
         unit_cost: 800.0, stock_quantity: 500, monthly_sales: 10
       });
