@@ -14,8 +14,12 @@ from typing import Dict, Any, List
 
 from agents.workflow import app_workflow
 from models import schemas
-from core.database import get_db
+from core.database import get_db, engine, SessionLocal
 import crud
+from models.domain import Base, AgentTask, AgentReport, SystemState
+
+# Create missing tables safely
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Autonomous Inventory & Markdown Agent")
 
@@ -27,21 +31,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-reports_store = {}
-agent_status = {}
-active_tasks = {}
-
-global_monitor_state = {
-    "agents": {
-        "Inventory_Agent": {"status": "Idle", "last_run": "Never", "duration": 0, "message": "Ready"},
-        "Sales_Analysis_Agent": {"status": "Idle", "last_run": "Never", "duration": 0, "message": "Ready"},
-        "SQL_Agent": {"status": "Idle", "last_run": "Never", "duration": 0, "message": "Ready"},
-        "Pricing_Agent": {"status": "Idle", "last_run": "Never", "duration": 0, "message": "Ready"},
-        "Risk_Analysis_Agent": {"status": "Idle", "last_run": "Never", "duration": 0, "message": "Ready"},
-        "Report_Agent": {"status": "Idle", "last_run": "Never", "duration": 0, "message": "Ready"},
-    },
-    "mcp_calls": []
-}
+def get_default_monitor_state():
+    return {
+        "agents": {
+            "Inventory_Agent": {"status": "Idle", "last_run": "Never", "duration": 0, "message": "Ready"},
+            "Sales_Analysis_Agent": {"status": "Idle", "last_run": "Never", "duration": 0, "message": "Ready"},
+            "SQL_Agent": {"status": "Idle", "last_run": "Never", "duration": 0, "message": "Ready"},
+            "Pricing_Agent": {"status": "Idle", "last_run": "Never", "duration": 0, "message": "Ready"},
+            "Risk_Analysis_Agent": {"status": "Idle", "last_run": "Never", "duration": 0, "message": "Ready"},
+            "Report_Agent": {"status": "Idle", "last_run": "Never", "duration": 0, "message": "Ready"},
+        },
+        "mcp_calls": []
+    }
 
 @app.get("/health")
 def health_check():
@@ -79,8 +80,8 @@ async def upload_inventory(file: UploadFile = File(...), db: Session = Depends(g
 
 @app.get("/dashboard-stats")
 def get_stats(db: Session = Depends(get_db)):
-    active_agents = len([k for k, v in agent_status.items() if v == "started"])
-    total_reports = len(reports_store)
+    active_agents = db.query(AgentTask).filter(AgentTask.status == "started").count()
+    total_reports = db.query(AgentReport).count()
     return crud.get_dashboard_stats(db, active_agents, total_reports)
 
 @app.get("/inventory")
@@ -119,10 +120,11 @@ def delete_inventory(product_id: str, db: Session = Depends(get_db)):
     return {"status": "success"}
 
 @app.post("/analyze")
-async def analyze_inventory(data: Dict[str, Any]):
+async def analyze_inventory(data: Dict[str, Any], db: Session = Depends(get_db)):
     task_id = str(uuid.uuid4())
-    agent_status[task_id] = "started"
-    active_tasks[task_id] = data
+    db_task = AgentTask(task_id=task_id, status="started", payload=data)
+    db.add(db_task)
+    db.commit()
     return {"task_id": task_id, "status": "started"}
 
 async def run_workflow_generator(task_id: str, payload: dict):
@@ -140,22 +142,34 @@ async def run_workflow_generator(task_id: str, payload: dict):
         for output in app_workflow.stream(state):
             for key, value in output.items():
                 node_name = key
-                global_monitor_state["agents"][node_name] = {
-                    "status": "Completed",
-                    "last_run": datetime.utcnow().isoformat() + "Z",
-                    "duration": round(time.time() - start_time, 2),
-                    "message": "Processed successfully"
-                }
                 
-                global_monitor_state["mcp_calls"].insert(0, {
-                    "timestamp": datetime.utcnow().isoformat() + "Z",
-                    "tool_name": f"{node_name.lower()}_call",
-                    "status": "Success",
-                    "duration": f"{int((time.time() - start_time)*1000)}ms"
-                })
-                global_monitor_state["mcp_calls"] = global_monitor_state["mcp_calls"][:10]
+                with SessionLocal() as db:
+                    monitor = db.query(SystemState).filter(SystemState.key == "global_monitor").first()
+                    monitor_state = monitor.state_value if monitor else get_default_monitor_state()
+                    
+                    monitor_state["agents"][node_name] = {
+                        "status": "Completed",
+                        "last_run": datetime.utcnow().isoformat() + "Z",
+                        "duration": round(time.time() - start_time, 2),
+                        "message": "Processed successfully"
+                    }
+                    
+                    monitor_state["mcp_calls"].insert(0, {
+                        "timestamp": datetime.utcnow().isoformat() + "Z",
+                        "tool_name": f"{node_name.lower()}_call",
+                        "status": "Success",
+                        "duration": f"{int((time.time() - start_time)*1000)}ms"
+                    })
+                    monitor_state["mcp_calls"] = monitor_state["mcp_calls"][:10]
+                    
+                    if not monitor:
+                        monitor = SystemState(key="global_monitor", state_value=monitor_state)
+                        db.add(monitor)
+                    else:
+                        monitor.state_value = monitor_state
+                    db.commit()
+                
                 start_time = time.time()
-
                 yield f"data: {json.dumps({'node': key, 'status': 'completed', 'data': value})}\n\n"
                 await asyncio.sleep(1)
             state.update(list(output.values())[0])
@@ -163,17 +177,29 @@ async def run_workflow_generator(task_id: str, payload: dict):
         final_report = state.get("final_report", {})
         final_report["status"] = "Pending"
         final_report["task_id"] = task_id
-        reports_store[task_id] = final_report
-        agent_status[task_id] = "completed"
+        
+        with SessionLocal() as db:
+            db_report = AgentReport(task_id=task_id, status="Pending", report_data=final_report)
+            db.add(db_report)
+            db_task = db.query(AgentTask).filter(AgentTask.task_id == task_id).first()
+            if db_task:
+                db_task.status = "completed"
+            db.commit()
+            
         yield f"data: {json.dumps({'node': 'END', 'status': 'completed', 'task_id': task_id})}\n\n"
     except Exception as e:
-        agent_status[task_id] = "failed"
+        with SessionLocal() as db:
+            db_task = db.query(AgentTask).filter(AgentTask.task_id == task_id).first()
+            if db_task:
+                db_task.status = "failed"
+            db.commit()
         yield f"data: {json.dumps({'node': 'ERROR', 'status': 'failed', 'error': str(e)})}\n\n"
 
 @app.get("/agent-status/{task_id}")
-async def stream_agent_status(task_id: str):
-    # Retrieve the product data that was sent to /analyze
-    payload = active_tasks.get(task_id, {})
+async def stream_agent_status(task_id: str, db: Session = Depends(get_db)):
+    # Retrieve the product data from DB
+    db_task = db.query(AgentTask).filter(AgentTask.task_id == task_id).first()
+    payload = db_task.payload if db_task else {}
     
     # Fallback to defaults if something is missing
     payload.setdefault("product_id", "P001")
@@ -186,22 +212,31 @@ async def stream_agent_status(task_id: str):
     return StreamingResponse(run_workflow_generator(task_id, payload), media_type="text/event-stream")
 
 @app.get("/report/{task_id}")
-def get_report(task_id: str):
-    if task_id in reports_store:
-        return reports_store[task_id]
+def get_report(task_id: str, db: Session = Depends(get_db)):
+    report = db.query(AgentReport).filter(AgentReport.task_id == task_id).first()
+    if report:
+        return report.report_data
     return {"error": "Report not found"}
 
 @app.get("/reports")
-def get_all_reports():
-    return list(reports_store.values())
+def get_all_reports(db: Session = Depends(get_db)):
+    reports = db.query(AgentReport).all()
+    return [r.report_data for r in reports]
 
 @app.post("/report/{task_id}/approve")
-def approve_report(task_id: str):
-    if task_id in reports_store:
-        reports_store[task_id]["status"] = "Approved"
-        return {"status": "success", "report": reports_store[task_id]}
+def approve_report(task_id: str, db: Session = Depends(get_db)):
+    report = db.query(AgentReport).filter(AgentReport.task_id == task_id).first()
+    if report:
+        report.status = "Approved"
+        report.report_data["status"] = "Approved"
+        # Manually signal SQLAlchemy that JSON is modified
+        from sqlalchemy.orm.attributes import flag_modified
+        flag_modified(report, "report_data")
+        db.commit()
+        return {"status": "success", "report": report.report_data}
     raise HTTPException(status_code=404, detail="Report not found")
 
 @app.get("/monitor-stats")
-def get_monitor_stats():
-    return global_monitor_state
+def get_monitor_stats(db: Session = Depends(get_db)):
+    monitor = db.query(SystemState).filter(SystemState.key == "global_monitor").first()
+    return monitor.state_value if monitor else get_default_monitor_state()

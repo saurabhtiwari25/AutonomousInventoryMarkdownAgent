@@ -59,3 +59,22 @@ class Profitability(Base):
     margin_percentage = Column(Float, nullable=False)
 
     product = relationship("Product", back_populates="profitability")
+
+from sqlalchemy import JSON
+
+class AgentTask(Base):
+    __tablename__ = "agent_tasks"
+    task_id = Column(String, primary_key=True, index=True)
+    status = Column(String, default="pending")
+    payload = Column(JSON, default={})
+
+class AgentReport(Base):
+    __tablename__ = "agent_reports"
+    task_id = Column(String, primary_key=True, index=True)
+    status = Column(String, default="Pending")
+    report_data = Column(JSON, default={})
+
+class SystemState(Base):
+    __tablename__ = "system_state"
+    key = Column(String, primary_key=True, index=True)
+    state_value = Column(JSON, default={})
