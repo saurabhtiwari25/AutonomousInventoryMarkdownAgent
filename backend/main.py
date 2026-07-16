@@ -5,7 +5,6 @@ from core.database import engine
 from models.domain import Base
 from routers import inventory_router, agents_router, reports_router, dashboard_router
 
-# Create missing tables safely
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Autonomous Inventory & Markdown Agent")
@@ -22,7 +21,6 @@ app.add_middleware(
 def health_check():
     return {"status": "ok"}
 
-# Include routers
 app.include_router(inventory_router)
 app.include_router(agents_router)
 app.include_router(reports_router)
