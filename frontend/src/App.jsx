@@ -15,20 +15,16 @@ function App() {
     <div className="flex w-full min-h-screen bg-background">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Top bar */}
         <header className="relative h-[52px] border-b border-border flex items-center px-6 shrink-0">
-          {/* Centered Title */}
           <h1 className="absolute left-1/2 -translate-x-1/2 text-2xl font-bold tracking-tight text-foreground">
             Autonomous Inventory & Markdown Agent
           </h1>
 
-          {/* Right Controls */}
           <div className="ml-auto flex items-center gap-3">
             <ModeToggle />
           </div>
         </header>
 
-        {/* Content */}
         <main className="flex-1 overflow-y-auto" style={{ padding: '2.5rem 3rem' }}>
           <Routes>
             <Route path="/" element={<Dashboard />} />
