@@ -7,7 +7,6 @@ structured tool calls.
 """
 from langchain_core.tools import tool
 
-# Import underlying functions from MCP servers
 from mcp_servers.inventory_server import (
     analyze_stock_levels as _analyze_stock_levels,
     get_reorder_recommendation as _get_reorder_recommendation
@@ -23,7 +22,6 @@ from mcp_servers.sql_server import (
     query_pricing_history as _query_pricing_history
 )
 
-# ─── Inventory MCP Tools ───────────────────────────────────────────────────────
 @tool
 def analyze_stock_levels(stock_quantity: int, monthly_sales: int) -> str:
     """Analyze inventory stock levels and calculate months-of-supply metric."""
@@ -34,7 +32,6 @@ def get_reorder_recommendation(stock_quantity: int, monthly_sales: int, lead_tim
     """Calculate reorder point and safety stock recommendation for a product."""
     return _get_reorder_recommendation(stock_quantity, monthly_sales, lead_time_days)
 
-# ─── Pricing MCP Tools ────────────────────────────────────────────────────────
 @tool
 def calculate_discount(current_price: float, target_price: float) -> str:
     """Calculate the discount percentage between a current price and a target price."""
@@ -50,7 +47,6 @@ def calculate_revenue_projection(price: float, expected_monthly_sales: int) -> s
     """Project revenue over a given number of months at a specified price and sales volume."""
     return _calculate_revenue_projection(price, expected_monthly_sales)
 
-# ─── SQL / Database MCP Tools ─────────────────────────────────────────────────
 @tool
 def query_product_data(product_id: str) -> str:
     """Query comprehensive product data from the database including inventory and profitability."""
@@ -66,7 +62,6 @@ def query_pricing_history(product_id: str) -> str:
     """Query historical pricing changes for a product."""
     return _query_pricing_history(product_id)
 
-# ─── Tool Groups (for agent binding) ──────────────────────────────────────────
 INVENTORY_TOOLS = [analyze_stock_levels, get_reorder_recommendation]
 PRICING_TOOLS = [calculate_discount, calculate_margin, calculate_revenue_projection]
 SQL_TOOLS = [query_product_data, query_sales_history, query_pricing_history]
