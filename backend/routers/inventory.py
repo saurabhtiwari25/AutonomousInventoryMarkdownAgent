@@ -19,6 +19,17 @@ async def upload_inventory(file: UploadFile = File(...), db: Session = Depends(g
         df = pd.read_json(io.BytesIO(contents))
     df.columns = df.columns.str.strip()
 
+    # Fill numeric columns with 0 before converting to dict to satisfy strict Pydantic typing
+    numeric_cols = ['stock_quantity', 'monthly_sales', 'unit_cost', 'current_price']
+    for col in numeric_cols:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
+            
+    string_cols = ['product_id', 'product_name', 'category']
+    for col in string_cols:
+        if col in df.columns:
+            df[col] = df[col].fillna("Unknown").astype(str)
+    
     df = df.replace({np.nan: None})
         
     records = df.to_dict(orient="records")
