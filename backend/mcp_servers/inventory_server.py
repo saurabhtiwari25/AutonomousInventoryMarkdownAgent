@@ -24,7 +24,7 @@ def analyze_stock_levels(stock_quantity: int, monthly_sales: int) -> str:
 def get_reorder_recommendation(stock_quantity: int, monthly_sales: int, lead_time_days: int = 30) -> str:
     """Calculate reorder point and safety stock recommendation for a product."""
     daily_sales = monthly_sales / 30
-    safety_stock = daily_sales * 14  # 2-week safety buffer
+    safety_stock = daily_sales * 14
     reorder_point = (daily_sales * lead_time_days) + safety_stock
     needs_reorder = stock_quantity <= reorder_point
     return (
