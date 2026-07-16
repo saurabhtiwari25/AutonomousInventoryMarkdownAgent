@@ -9,7 +9,7 @@ def create_product_full(db: Session, item: schemas.InventoryUploadRow):
     # Check if exists
     db_product = db.query(domain.Product).filter(domain.Product.product_id == item.product_id).first()
     if db_product:
-        return update_product_full(db, item.product_id, item)
+        return db_product
 
     db_product = domain.Product(
         product_id=item.product_id,
@@ -22,8 +22,7 @@ def create_product_full(db: Session, item: schemas.InventoryUploadRow):
 
     db_inventory = domain.Inventory(
         product_id_fk=db_product.id,
-        stock_quantity=item.stock_quantity,
-        monthly_sales=item.monthly_sales
+        stock_quantity=item.stock_quantity
     )
     db.add(db_inventory)
 
@@ -53,31 +52,14 @@ def update_product_full(db: Session, product_id: str, item: schemas.InventoryUpl
 
     if db_product.inventory:
         db_product.inventory.stock_quantity = item.stock_quantity
-        db_product.inventory.monthly_sales = item.monthly_sales
-    else:
-        db_inventory = domain.Inventory(
-            product_id_fk=db_product.id,
-            stock_quantity=item.stock_quantity,
-            monthly_sales=item.monthly_sales
-        )
-        db.add(db_inventory)
     
-    margin = 0
-    if item.current_price > 0:
-        margin = ((item.current_price - item.unit_cost) / item.current_price) * 100
-
     if db_product.profitability:
         db_product.profitability.unit_cost = item.unit_cost
         db_product.profitability.current_price = item.current_price
+        margin = 0
+        if item.current_price > 0:
+            margin = ((item.current_price - item.unit_cost) / item.current_price) * 100
         db_product.profitability.margin_percentage = margin
-    else:
-        db_profit = domain.Profitability(
-            product_id_fk=db_product.id,
-            unit_cost=item.unit_cost,
-            current_price=item.current_price,
-            margin_percentage=margin
-        )
-        db.add(db_profit)
 
     db.commit()
     db.refresh(db_product)
