@@ -25,6 +25,7 @@ Determine the optimal markdown discount (as a decimal, e.g. 0.15 for 15%) for pr
 Product ID: {state.get("product_id")}
 Inventory Health: {state.get("inventory_health")}
 Sales Velocity: {state.get("sales_velocity")}
+Monthly Sales: {state.get("monthly_sales")}
 Current Price: {state.get("current_price")}
 Unit Cost: {state.get("unit_cost")}
 
@@ -40,7 +41,7 @@ Return ONLY valid JSON exactly like:
 {{
     "discount": 0.15,
     "expected_revenue": 1000.50,
-    "reasoning": "Product is overstocked and demand is weak, so a discount is recommended to improve inventory turnover."
+    "reasoning": "<generate a short reason based on actual inventory health, monthly sales, and velocity>"
 }}
 
 Do not wrap the response in markdown.
