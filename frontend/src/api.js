@@ -1,4 +1,4 @@
-const API_BASE = 'https://autonomousinventorymarkdownagent.onrender.com';
+const API_BASE = 'http://localhost:8000';
 
 export async function uploadInventory(file) {
   const formData = new FormData();
@@ -80,6 +80,14 @@ export async function rejectReport(taskId) {
     method: 'DELETE',
   });
   if (!res.ok) throw new Error('Failed to reject report');
+  return await res.json();
+}
+
+export async function deleteApprovedReports() {
+  const res = await fetch(`${API_BASE}/reports/approved`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) throw new Error('Failed to delete approved reports');
   return await res.json();
 }
 

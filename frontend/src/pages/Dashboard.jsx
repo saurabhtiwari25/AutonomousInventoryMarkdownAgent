@@ -39,7 +39,9 @@ export default function Dashboard() {
         const reportsData = await getReports();
         setReports(reportsData.slice(-5).reverse());
       } catch (err) {
-        console.error("Failed to load dashboard data", err);
+        if (err.message !== "Failed to fetch") {
+          console.error("Failed to load dashboard data", err);
+        }
       } finally {
         setLoading(false);
       }
@@ -118,7 +120,7 @@ export default function Dashboard() {
                         —
                       </span>
                     ) : (
-                      kpi.value
+                      kpi.value === 0 ? "-" : kpi.value
                     )}
                   </div>
                 </div>

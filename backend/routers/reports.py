@@ -30,6 +30,15 @@ def approve_report(task_id: str, db: Session = Depends(get_db)):
         return {"status": "success", "report": report.report_data}
     raise HTTPException(status_code=404, detail="Report not found")
 
+@router.delete("s/approved")  # Maps to /reports/approved
+def delete_approved_reports(db: Session = Depends(get_db)):
+    approved = db.query(AgentReport).filter(AgentReport.status == "Approved").all()
+    count = len(approved)
+    for r in approved:
+        db.delete(r)
+    db.commit()
+    return {"status": "success", "deleted": count}
+
 @router.delete("/{task_id}")
 def delete_report(task_id: str, db: Session = Depends(get_db)):
     report = db.query(AgentReport).filter(AgentReport.task_id == task_id).first()

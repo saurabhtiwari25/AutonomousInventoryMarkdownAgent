@@ -40,7 +40,7 @@ Return ONLY valid JSON exactly like:
 {{
     "discount": 0.15,
     "expected_revenue": 1000.50,
-    "reasoning": "Product is overstocked and demand is weak, so a markdown is recommended to improve inventory turnover."
+    "reasoning": "Product is overstocked and demand is weak, so a discount is recommended to improve inventory turnover."
 }}
 
 Do not wrap the response in markdown.

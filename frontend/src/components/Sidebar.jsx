@@ -32,13 +32,13 @@ export default function Sidebar() {
           <Activity size={15} />
           Analysis
         </NavLink>
-        <NavLink to="/monitor" className={navItemClass}>
-          <ShieldAlert size={15} />
-          Monitor
-        </NavLink>
         <NavLink to="/reports" className={navItemClass}>
           <FileText size={15} />
           Reports
+        </NavLink>
+        <NavLink to="/monitor" className={navItemClass}>
+          <ShieldAlert size={15} />
+          Monitor
         </NavLink>
 
         <div className="flex-1" />

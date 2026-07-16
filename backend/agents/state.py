@@ -15,6 +15,7 @@ class AgentState(TypedDict):
     sql_insights: str
     recommended_discount: float
     expected_revenue: float
+    markdown_reasoning: str
     risk_score: str
     approval_status: str
     risk_reason: str

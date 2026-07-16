@@ -4,7 +4,7 @@ import { Edit2, Trash2, Plus, Search } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -14,6 +14,7 @@ export default function InventoryList() {
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [search, setSearch] = useState('');
+  const [confirmModal, setConfirmModal] = useState({ open: false, action: null, productId: null });
 
   const [formData, setFormData] = useState({
     product_id: '',
@@ -93,27 +94,26 @@ export default function InventoryList() {
     }
   };
 
-  const handleDelete = async (productId) => {
-    if (window.confirm(`Delete ${productId}?`)) {
-      try {
-        await deleteInventoryItem(productId);
-        fetchInventory();
-      } catch (err) {
-        console.error(err);
-        alert('Failed to delete');
-      }
-    }
+  const confirmDelete = (productId) => {
+    setConfirmModal({ open: true, action: 'single', productId });
   };
 
-  const handleDeleteAll = async () => {
-    if (window.confirm('Are you sure you want to remove ALL inventory items? This cannot be undone.')) {
-      try {
+  const confirmDeleteAll = () => {
+    setConfirmModal({ open: true, action: 'all', productId: null });
+  };
+
+  const executeDelete = async () => {
+    try {
+      if (confirmModal.action === 'all') {
         await deleteAllInventory();
-        fetchInventory();
-      } catch (err) {
-        console.error(err);
-        alert('Failed to delete all items');
+      } else if (confirmModal.action === 'single' && confirmModal.productId) {
+        await deleteInventoryItem(confirmModal.productId);
       }
+      setConfirmModal({ open: false, action: null, productId: null });
+      fetchInventory();
+    } catch (err) {
+      console.error(err);
+      alert('Failed to delete');
     }
   };
 
@@ -143,7 +143,7 @@ export default function InventoryList() {
         <div className="flex gap-2">
           <Button
             className="rounded-md !px-8 !py-3 !h-11 bg-destructive text-destructive-foreground hover:bg-destructive/90 text-sm font-medium gap-2"
-            onClick={handleDeleteAll}
+            onClick={confirmDeleteAll}
           >
             <Trash2 className="h-4 w-4" />
             Remove All
@@ -261,7 +261,7 @@ export default function InventoryList() {
                               variant="ghost"
                               size="icon-sm"
                               className="rounded-md bg-transparent dark:bg-transparent hover:bg-[#eaeaea] dark:hover:bg-[#333] hover:text-destructive"
-                              onClick={() => handleDelete(item.product_id)}
+                              onClick={() => confirmDelete(item.product_id)}
                             >
                               <Trash2 />
                             </Button>
@@ -474,6 +474,34 @@ export default function InventoryList() {
 
             </div>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={confirmModal.open} onOpenChange={(open) => setConfirmModal((prev) => ({ ...prev, open }))}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {confirmModal.action === 'all' ? 'Remove All Inventory' : 'Delete Product'}
+            </DialogTitle>
+            <DialogDescription>
+              {confirmModal.action === 'all'
+                ? 'Are you sure you want to remove ALL inventory items? This action cannot be undone.'
+                : `Are you sure you want to delete product ${confirmModal.productId}? This action cannot be undone.`}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-4">
+            <DialogClose render={
+              <Button variant="outline" className="rounded-md">Cancel</Button>
+            } />
+            <Button
+              variant="destructive"
+              className="rounded-md bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={executeDelete}
+            >
+              Delete
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
