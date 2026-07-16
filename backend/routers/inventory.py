@@ -51,7 +51,7 @@ def get_inventory(db: Session = Depends(get_db)):
             "stock_quantity": p.inventory.stock_quantity if p.inventory else 0,
             "unit_cost": p.profitability.unit_cost if p.profitability else 0.0,
             "current_price": p.profitability.current_price if p.profitability else 0.0,
-            "monthly_sales": 0  # Placeholder since we don't track monthly sales directly in Product yet
+            "monthly_sales": p.inventory.monthly_sales if p.inventory else 0
         })
     return result
 
