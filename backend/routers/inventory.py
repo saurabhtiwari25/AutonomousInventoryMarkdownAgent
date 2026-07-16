@@ -42,6 +42,7 @@ async def upload_inventory(file: UploadFile = File(...), db: Session = Depends(g
             crud.create_product_full(db, item)
             saved_count += 1
         except Exception as e:
+            db.rollback()
             print(f"Error saving record {record}: {e}")
             errors.append(str(e))
             
