@@ -44,7 +44,7 @@ export default function Analysis() {
     try {
       setRunning(true);
       setLogs(prev => [...prev, { time: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true }), message: `Initiating multi-agent workflow for ${product.product_name}...` }]);
-      const res = await axios.post('http://localhost:8000/analyze', {
+      const res = await axios.post('https://autonomousinventorymarkdownagent.onrender.com/analyze', {
         product_id: product.product_id,
         product_name: product.product_name,
         current_price: product.current_price,
@@ -85,7 +85,7 @@ export default function Analysis() {
 
   useEffect(() => {
     if (!taskId || !running) return;
-    const es = new EventSource(`http://localhost:8000/agent-status/${taskId}`);
+    const es = new EventSource(`https://autonomousinventorymarkdownagent.onrender.com/agent-status/${taskId}`);
     es.onmessage = (e) => {
       const data = JSON.parse(e.data);
       const time = formatTimestamp(data.timestamp);
