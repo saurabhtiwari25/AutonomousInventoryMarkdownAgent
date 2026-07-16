@@ -19,17 +19,6 @@ async def upload_inventory(file: UploadFile = File(...), db: Session = Depends(g
         df = pd.read_json(io.BytesIO(contents))
     df.columns = df.columns.str.strip()
 
-    # Fill numeric columns with 0 before converting to dict to satisfy strict Pydantic typing
-    numeric_cols = ['stock_quantity', 'monthly_sales', 'unit_cost', 'current_price']
-    for col in numeric_cols:
-        if col in df.columns:
-            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
-            
-    string_cols = ['product_id', 'product_name', 'category']
-    for col in string_cols:
-        if col in df.columns:
-            df[col] = df[col].fillna("Unknown").astype(str)
-    
     df = df.replace({np.nan: None})
         
     records = df.to_dict(orient="records")
@@ -42,7 +31,6 @@ async def upload_inventory(file: UploadFile = File(...), db: Session = Depends(g
             crud.create_product_full(db, item)
             saved_count += 1
         except Exception as e:
-            db.rollback()
             print(f"Error saving record {record}: {e}")
             errors.append(str(e))
             
@@ -63,7 +51,7 @@ def get_inventory(db: Session = Depends(get_db)):
             "stock_quantity": p.inventory.stock_quantity if p.inventory else 0,
             "unit_cost": p.profitability.unit_cost if p.profitability else 0.0,
             "current_price": p.profitability.current_price if p.profitability else 0.0,
-            "monthly_sales": p.inventory.monthly_sales if p.inventory else 0
+            "monthly_sales": 0  # Placeholder since we don't track monthly sales directly in Product yet
         })
     return result
 
