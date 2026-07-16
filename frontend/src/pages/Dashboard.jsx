@@ -90,7 +90,6 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col flex-1 gap-8 p-1">
-      {/* Header */}
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
           Operations Dashboard
@@ -100,7 +99,6 @@ export default function Dashboard() {
         </p>
       </div>
 
-      {/* KPI Cards */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
         {kpiCards.map((kpi) => (
           <Card
@@ -136,9 +134,7 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Bottom Section */}
       <div className="grid flex-1 grid-cols-1 gap-5 lg:grid-cols-5">
-        {/* Recent Analyses */}
         <Card className="lg:col-span-3">
           <CardHeader className="!px-8 !pt-8 !pb-5">
             <div className="flex items-center justify-between">
@@ -201,7 +197,6 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Agent Activity */}
         <Card className="lg:col-span-2">
           <CardHeader className="!px-8 !pt-8 !pb-5">
             <div className="flex items-center justify-between">
