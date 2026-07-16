@@ -37,7 +37,6 @@ class InventoryUploadRow(BaseModel):
     current_price: float
     monthly_sales: int
 
-# Agent Output Models
 class InventoryAgentOutput(BaseModel):
     product_id: str
     stock_level: int
