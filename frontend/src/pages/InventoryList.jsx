@@ -158,7 +158,6 @@ export default function InventoryList() {
         </div>
       </div>
 
-      {/* Fixed Search Bar */}
       <div className="relative w-full max-w-md">
         <Search
           className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
@@ -292,7 +291,6 @@ export default function InventoryList() {
           </DialogHeader>
 
           <form onSubmit={handleSave} className="space-y-8 pt-6">
-            {/* Product Information */}
 
             <div className="space-y-4">
 
