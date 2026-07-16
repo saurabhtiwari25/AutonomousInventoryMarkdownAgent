@@ -22,7 +22,8 @@ def create_product_full(db: Session, item: schemas.InventoryUploadRow):
 
     db_inventory = domain.Inventory(
         product_id_fk=db_product.id,
-        stock_quantity=item.stock_quantity
+        stock_quantity=item.stock_quantity,
+        monthly_sales=item.monthly_sales
     )
     db.add(db_inventory)
 
@@ -52,6 +53,7 @@ def update_product_full(db: Session, product_id: str, item: schemas.InventoryUpl
 
     if db_product.inventory:
         db_product.inventory.stock_quantity = item.stock_quantity
+        db_product.inventory.monthly_sales = item.monthly_sales
     
     if db_product.profitability:
         db_product.profitability.unit_cost = item.unit_cost
