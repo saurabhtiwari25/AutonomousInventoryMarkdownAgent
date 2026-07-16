@@ -24,6 +24,7 @@ class Inventory(Base):
     stock_quantity = Column(Integer, default=0)
     reorder_level = Column(Integer, default=0)
     last_restock_date = Column(Date, nullable=True)
+    monthly_sales = Column(Integer, default=0)
 
     product = relationship("Product", back_populates="inventory")
 
