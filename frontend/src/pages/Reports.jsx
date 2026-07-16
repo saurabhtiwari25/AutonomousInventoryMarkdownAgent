@@ -166,7 +166,6 @@ export default function Reports() {
         </div>
       )}
 
-      {/* AI Reasoning Popup */}
       <Dialog open={reasoningModal.open} onOpenChange={(open) => setReasoningModal(prev => ({ ...prev, open }))}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
