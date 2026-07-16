@@ -17,14 +17,12 @@ def inventory_agent_node(state: AgentState) -> AgentState:
     
     response = llm.invoke(prompt)
     
-    # Simple extraction of the health status from the response
     content = response.content.upper() if response.content else ""
     if "OVERSTOCKED" in content:
         health = "Overstocked"
     elif "LOW STOCK" in content:
         health = "Low Stock"
     elif not content and response.tool_calls:
-        # If it just called the tool, we execute it
         tool_call = response.tool_calls[0]
         if tool_call["name"] == "analyze_stock_levels":
             result = analyze_stock_levels.invoke(tool_call["args"])
