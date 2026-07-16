@@ -9,7 +9,7 @@ def create_product_full(db: Session, item: schemas.InventoryUploadRow):
     # Check if exists
     db_product = db.query(domain.Product).filter(domain.Product.product_id == item.product_id).first()
     if db_product:
-        return db_product # Or update
+        return update_product_full(db, item.product_id, item)
 
     db_product = domain.Product(
         product_id=item.product_id,
